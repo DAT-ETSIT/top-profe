@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
-	BrowserRouter, Routes, Route,
+	BrowserRouter, Routes, Route, useSearchParams,
 } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ErrorView from './views/ErrorView';
@@ -29,10 +29,7 @@ export default function App() {
 		<BrowserRouter>
 			<Toaster toastOptions={{ className: 'toast', duration: 3000 }} />
 			<Routes>
-				<Route path="/" element={<InitialMenu />} />
-				<Route path="subjects/*" element={<SubjectRoutes />} />
-				<Route path="professors/*" element={<ProfessorRoutes />} />
-				<Route path="ranking" element={<ProvisionalRankingView />} />
+				<Route path="/" element={<RewindableRoutes />} />
 				<Route path="admin/*" element={<AdminRoutes />} />
 				<Route path="votes/:voteId" element={<VoteView />} />
 				<Route path="failed-login" element={<LoginErrorView />} />
@@ -41,6 +38,23 @@ export default function App() {
 				<Route path="*" element={<ErrorView code={404} />} />
 			</Routes>
 		</BrowserRouter>
+	);
+}
+
+function RewindableRoutes() {
+	const [searchParams] = useSearchParams();
+	const academicYear = searchParams.get('academicYear');
+
+	// Validamos el formato del año académico para pasarlo a los componentes
+	const validAcademicYear = /^[0-9]{4}-[0-9]{2}$/.test(academicYear) ? academicYear : null;
+
+	return (
+		<Routes>
+			<Route index element={<InitialMenu academicYear={validAcademicYear} />} />
+			<Route path="subjects/*" element={<SubjectRoutes academicYear={validAcademicYear} />} />
+			<Route path="professors/*" element={<ProfessorRoutes academicYear={validAcademicYear} />} />
+			<Route path="ranking" element={<ProvisionalRankingView academicYear={validAcademicYear} />} />
+		</Routes>
 	);
 }
 

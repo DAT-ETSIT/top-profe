@@ -9,8 +9,13 @@ import { fetchGet, fetchPost } from '../util';
 const config = require('../../server/config.json');
 
 export default class InitialMenu extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
+		const { academicYear } = this.props;
+		this.academicYear = academicYear;
+
+		this.urlApiParams = this.academicYear ? '?academicYear=' + this.academicYear : ''
+
 		this.state = {
 			isLoaded: false,
 			showStudentModal: false,
@@ -57,7 +62,7 @@ export default class InitialMenu extends Component {
 				if (degrees) this.setState({ degreeId: degrees[0].id });
 			});
 
-		fetchGet('/api/votes')
+		fetchGet('/api/votes' + this.urlApiParams)
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
 				res && this.setState({ votes: res.votes });
@@ -211,7 +216,7 @@ export default class InitialMenu extends Component {
 					</p>
 					<br />
 					<div className="centered">
-						<p>Votos en el curso {config.server.academicYear}: <strong>{votes}</strong></p>
+						<p>Votos en el curso {this.academicYear || config.server.academicYear}: <strong>{votes}</strong></p>
 					</div>
 				</div>
 				<br />
