@@ -81,6 +81,11 @@ Subject.belongsTo(Degree, {
 	targetKey: 'id',
 });
 
+Subject.hasMany(Ballot, {
+	as: 'ballot',
+	foreignKey: 'subjectId',
+});
+
 Vote.belongsTo(Ballot, {
 	as: 'ballot',
 	sourceKey: 'ballotId',

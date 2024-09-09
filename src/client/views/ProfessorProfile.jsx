@@ -13,8 +13,11 @@ function ProfessorProfile(ComponentClass) {
 class ProfessorProfileClass extends Component {
 	constructor(props) {
 		super(props);
-		const { params: { profId } } = this.props;
+		const { params: { profId }, academicYear } = this.props;
 		this.profId = profId;
+		this.academicYear = academicYear;
+
+		this.urlApiParams = this.academicYear ? '?academicYear=' + this.academicYear : ''
 
 		this.state = {
 			isLoaded: false,
@@ -39,7 +42,7 @@ class ProfessorProfileClass extends Component {
 				});
 			});
 
-		fetchGet(`/api/professors/${this.profId}`)
+		fetchGet(`/api/professors/${this.profId}` + this.urlApiParams)
 			.then(r => (r?.status ===200) && r.json())
 			.then((res) => {
 				this.setState({
@@ -51,6 +54,7 @@ class ProfessorProfileClass extends Component {
 	}
 
 	submitRating(ballotId, stars) {
+		if (this.academicYear) return;
 		fetchPost(`/api/ballots/${ballotId}`, { stars })
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
@@ -96,6 +100,7 @@ class ProfessorProfileClass extends Component {
 					degreeAcronym={subject.degree.acronym}
 					voteExists={ballot.register.length > 0}
 					onVote={this.submitRating}
+					academicYear={this.academicYear}
 				/>
 			);
 			subjectRows.push(row);

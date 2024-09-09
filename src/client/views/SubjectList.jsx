@@ -5,8 +5,13 @@ import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { fetchGet } from '../util';
 
 export default class SubjectList extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
+		const { academicYear } = this.props;
+		this.academicYear = academicYear;
+
+		this.urlApiParams = this.academicYear ? '?academicYear=' + this.academicYear : ''
+
 		this.state = {
 			isLoaded: false,
 			subjects: [],
@@ -23,7 +28,7 @@ export default class SubjectList extends Component {
 	}
 
 	componentDidMount() {
-		fetchGet('/api/subjects')
+		fetchGet('/api/subjects' + this.urlApiParams)
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
 				this.setState({

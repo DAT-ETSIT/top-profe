@@ -9,6 +9,15 @@ module.exports.getSubjects = async (req, res) => {
 				model: models.Degree,
 				as: 'degree',
 				attributes: ['id', 'acronym'],
+			},
+			{
+				model: models.Ballot,
+				as: 'ballot',
+				attributes: ['id'],
+				required: true,
+				where: {
+					academicYear: req.query.academicYear || config.server.academicYear,
+				},
 			}],
 		});
 

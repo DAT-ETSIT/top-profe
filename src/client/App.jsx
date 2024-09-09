@@ -29,7 +29,7 @@ export default function App() {
 		<BrowserRouter>
 			<Toaster toastOptions={{ className: 'toast', duration: 3000 }} />
 			<Routes>
-				<Route path="/" element={<RewindableRoutes />} />
+				<Route path="/*" element={<RewindableRoutes />} />
 				<Route path="admin/*" element={<AdminRoutes />} />
 				<Route path="votes/:voteId" element={<VoteView />} />
 				<Route path="failed-login" element={<LoginErrorView />} />
@@ -58,20 +58,22 @@ function RewindableRoutes() {
 	);
 }
 
-function SubjectRoutes() {
+function SubjectRoutes(props) {
+	const { academicYear } = props;
 	return (
 		<Routes>
-			<Route index element={<SubjectList />} />
-			<Route path=":subjId" element={<SubjectDetails />} />
+			<Route index element={<SubjectList academicYear={academicYear} />} />
+			<Route path=":subjId" element={<SubjectDetails academicYear={academicYear} />} />
 		</Routes>
 	);
 }
 
-function ProfessorRoutes() {
+function ProfessorRoutes(props) {
+	const { academicYear } = props;
 	return (
 		<Routes>
-			<Route index element={<ProfessorList />} />
-			<Route path=":profId" element={<ProfessorProfile />} />
+			<Route index element={<ProfessorList academicYear={academicYear} />} />
+			<Route path=":profId" element={<ProfessorProfile academicYear={academicYear} />} />
 		</Routes>
 	);
 }

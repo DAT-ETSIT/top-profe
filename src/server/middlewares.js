@@ -22,7 +22,7 @@ function checkLoginMock(req, res, next) {
 	req.session.user = {
 		id: 'p.perez',
 		email: 'p.perez@alumnos.upm.es',
-		degreeId: null,
+		degreeId: '09TT',
 		type: 'student',
 		admin: true,
 		active: true,

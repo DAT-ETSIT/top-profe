@@ -6,8 +6,13 @@ import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { fetchGet } from '../util';
 
 export default class ProfessorList extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
+		const { academicYear } = this.props;
+		this.academicYear = academicYear;
+
+		this.urlApiParams = this.academicYear ? '?academicYear=' + this.academicYear : ''
+
 		this.state = {
 			isLoaded: false,
 			professors: [],
@@ -31,7 +36,7 @@ export default class ProfessorList extends Component {
 				});
 			});
 
-		fetchGet('/api/professors')
+		fetchGet('/api/professors' + this.urlApiParams)
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
 				this.setState({
@@ -83,6 +88,7 @@ export default class ProfessorList extends Component {
 		return (
 			<div>
 				<h2 className="centered">Profesores</h2>
+				{this.academicYear ? <h4 className="centered"><i>Curso {this.academicYear}</i></h4> : ''}
 				<SearchInput
 					className="big-input search-input box"
 					placeholder="Buscar profesor..."
