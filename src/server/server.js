@@ -14,7 +14,7 @@ const sequelize = require('./models');
 const router = require('./routes/router');
 const config = require('./config.json');
 const loginController = require('./controllers/loginController');
-const { globalErrorHandler } = require('./errors');
+const { globalErrorHandler } = require('./errors/errors');
 
 const app = express();
 

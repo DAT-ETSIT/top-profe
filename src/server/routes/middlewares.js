@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-const { UnauthorizedError, LimitedUserError, ExcludedUserError, NonActiveUserError } = require('../errors');
+const { UnauthorizedError, LimitedUserError, ExcludedUserError, NonActiveUserError } = require('../errors/errors');
 const { models } = require('../models');
 
 function checkLogin(req, res, next) {

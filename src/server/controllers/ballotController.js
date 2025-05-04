@@ -3,7 +3,7 @@ const { createHash, randomBytes } = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { models, Sequelize } = require('../models');
-const { sendVoteMail } = require('../mail');
+const { sendVoteMail } = require('../mail/mail');
 
 const config = require('../config.json');
 
