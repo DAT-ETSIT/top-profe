@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-const { UnauthorizedError, LimitedUserError, ExcludedUserError, NonActiveUserError } = require('./errors');
-const { models } = require('./models');
+const { UnauthorizedError, LimitedUserError, ExcludedUserError, NonActiveUserError } = require('../errors');
+const { models } = require('../models');
 
 function checkLogin(req, res, next) {
 	if (!req.session.user?.id) return next(new UnauthorizedError());
@@ -33,29 +33,34 @@ function checkLoginMock(req, res, next) {
 
 // Load the mocked login comprobation iff this is a development instance.
 module.exports.checkLogin = (
+	console.log('Checking login'),
 	(process.env.NODE_ENV === 'development') ? checkLoginMock
 		: checkLogin);
 
 // Rejects queries from excluded users.
 module.exports.checkActive = (req, res, next) => {
+	console.log('Checking active user');
 	if (!req.session.user.active) return next(new NonActiveUserError());
 	return next();
 };
 
 // Rejects queries from excluded users.
 module.exports.restrictExcluded = (req, res, next) => {
+	console.log('Checking excluded user');
 	if (req.session.user.excluded) return next(new ExcludedUserError());
 	return next();
 };
 
 // Rejects queries that aren't from ETSIT students.
 module.exports.restrictLimitedUsers = (req, res, next) => {
+	console.log('Checking limited user');
 	if (req.session.user.type !== 'student') return next(new LimitedUserError());
 	return next();
 };
 
 // Rejects queries that aren't from administrators.
 module.exports.restrictAdmins = (req, res, next) => {
+	console.log('Checking admin user');
 	if (!req.session.user.admin) return next(new LimitedUserError());
 	return next();
 };

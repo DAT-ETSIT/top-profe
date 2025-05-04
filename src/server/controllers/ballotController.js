@@ -90,7 +90,7 @@ module.exports.registerVote = async (req, res) => {
 			return res.status(503).json({ message: 'Error al enviar el correo de confirmación.' });
 		}
 
-		return res.status(200).json({ message: 'Voto registrado.', voteURL: `${config.server.url}/votes/${vote.id}?key=${salt}` });
+		return res.status(200).json({ message: 'Voto registrado.', voteURL: `${config.server.url}/verified/votes/${vote.id}?key=${salt}` });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: 'Error al registrar el voto.' });

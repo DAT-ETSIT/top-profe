@@ -44,7 +44,7 @@ class VoteViewClass extends Component {
 
 		const key = new URLSearchParams(window.location.search).get('key');
 
-		fetchGet(`/api/votes/${this.voteId}?key=${key}`)
+		fetchGet(`/api/verified/votes/${this.voteId}?key=${key}`)
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
 				this.setState({
@@ -65,7 +65,7 @@ class VoteViewClass extends Component {
 		});
 
 		const loadingToast = toast.loading('Eliminando voto...');
-		fetchDelete(`/api/votes/${this.voteId}?key=${this.state.key}`, {})
+		fetchDelete(`/api/verified/votes/${this.voteId}?key=${this.state.key}`, {})
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
 				toast.dismiss(loadingToast);
@@ -84,7 +84,7 @@ class VoteViewClass extends Component {
 		const key = new URLSearchParams(window.location.search).get('key');
 
 		const loadingToast = toast.loading('Enviando confirmación...');
-		fetchGet(`/api/votes/${this.voteId}/confirmation?key=${key}`)
+		fetchGet(`/api/verified/votes/${this.voteId}/confirmation?key=${key}`)
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
 				toast.dismiss(loadingToast);

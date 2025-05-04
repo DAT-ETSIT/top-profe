@@ -11,7 +11,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const { Issuer, Strategy } = require('openid-client');
 
 const sequelize = require('./models');
-const router = require('./router');
+const router = require('./routes/router');
 const config = require('./config.json');
 const loginController = require('./controllers/loginController');
 const { globalErrorHandler } = require('./errors');
