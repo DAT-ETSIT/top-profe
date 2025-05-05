@@ -22,7 +22,7 @@ module.exports.getDegrees = async (req, res) => {
 				required: true,
 				attributes: ['id'],
 				where: {
-					academicYear: config.server.academicYear,
+					academicYear: config.server.currentAcademicYear,
 				},
 			}],
 		});
