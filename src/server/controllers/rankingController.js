@@ -22,7 +22,7 @@ module.exports.getMostVoted = async (req, res) => {
 				attributes: [],
 				required: true,
 				where: {
-					academicYear: config.server.academicYear,
+					academicYear: config.server.currentAcademicYear,
 				},
 				include: [
 					{
