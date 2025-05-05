@@ -38,7 +38,7 @@ router.get('/professors/:professorHash', professorController.getProfessorProfile
 router.get('/subjects', subjectController.getSubjects);
 router.get('/subjects/:subjectId', subjectController.getSubjectDetails);
 
-// TODO
+// TODO: Implement the following endpoints.
 router.get('/rankings/votes', rankingController.getMostVoted);
 
 // ONLY STUDENTS: Register, get and delete specific votes.

@@ -23,6 +23,7 @@ app.use(express.urlencoded({
 	extended: true,
 }));
 
+//TODO: express.json is repeated.
 app.use(express.json({ limit: '15mb' }));
 // Produce logs via morgan's middleware.
 app.use(morgan('common'));
@@ -110,8 +111,6 @@ app.get('/login/callback', (req, res, next) => passport.authenticate('oidc', (er
 	req.session.referer = null;
 	return res.redirect(redirectTo || '/');
 });
-
-// app.get('/login/callback', passport.authenticate('oidc'));
 
 // Main API router.
 app.use('/api', router);
