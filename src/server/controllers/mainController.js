@@ -4,8 +4,17 @@ const config = require('../config.json');
 
 module.exports.getVotes = async (req, res) => {
 	try {
-		const votes = await models.Vote.count();
-
+		const votes = await models.Vote.count({
+            include: [{
+                model: models.Ballot,
+                as: 'ballot',
+                required: true,
+                where: {
+                    academicYear: config.server.currentAcademicYear,
+                },
+            }],
+        });
+		
 		return res.status(200).json({ votes });
 	} catch (error) {
 		console.log(error);
