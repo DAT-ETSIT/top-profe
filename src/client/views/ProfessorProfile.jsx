@@ -51,7 +51,7 @@ class ProfessorProfileClass extends Component {
 	}
 
 	submitRating(ballotId, stars) {
-		fetchPost(`/api/ballots/${ballotId}`, { stars })
+		fetchPost(`/api/verified/ballots/${ballotId}`, { stars })
 			.then(r => (r?.status === 200) && r.json())
 			.then((res) => {
 				toast(t => (

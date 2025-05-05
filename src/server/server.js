@@ -11,10 +11,10 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const { Issuer, Strategy } = require('openid-client');
 
 const sequelize = require('./models');
-const router = require('./router');
+const router = require('./routes/router');
 const config = require('./config.json');
 const loginController = require('./controllers/loginController');
-const { globalErrorHandler } = require('./errors');
+const { globalErrorHandler } = require('./errors/errors');
 
 const app = express();
 
@@ -23,11 +23,10 @@ app.use(express.urlencoded({
 	extended: true,
 }));
 
+// Middleware for reading JSON POST payloads.
 app.use(express.json({ limit: '15mb' }));
 // Produce logs via morgan's middleware.
 app.use(morgan('common'));
-// Middleware for reading form-encoded POST payloads.
-app.use(express.json());
 // Serve the frontend files.
 app.use(express.static('dist'));
 // Let Express know if we are using a reverse proxy.
@@ -110,8 +109,6 @@ app.get('/login/callback', (req, res, next) => passport.authenticate('oidc', (er
 	req.session.referer = null;
 	return res.redirect(redirectTo || '/');
 });
-
-// app.get('/login/callback', passport.authenticate('oidc'));
 
 // Main API router.
 app.use('/api', router);
