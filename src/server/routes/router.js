@@ -19,6 +19,7 @@ const adminRouter = require('./adminRouter');
 const router = express.Router();
 
 router.get('/votes', mainController.getVotes);
+router.get('/currentAcademicYear', mainController.getCurrentAcademicYear)
 
 // ONLY LOGGED USERS, NOT EXCLUDED
 router.use(middlewares.checkLogin);
