@@ -3,12 +3,12 @@ const { createHash, randomBytes } = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { models, Sequelize } = require('../models');
-const { sendVoteMail } = require('../mail');
+const { sendVoteMail } = require('../mail/mail');
 
 const config = require('../config.json');
 
 function prepareMailTemplate(professorName, subjectName, subjectId, stars, voteId, voteKey) {
-	const data = fs.readFileSync(path.resolve(__dirname, '../mailTemplate.html'), 'utf8');
+	const data = fs.readFileSync(path.resolve(__dirname, '../../client/mail/mailTemplate.html'), 'utf8');
 	if (!data) {
 		console.error('Error al leer el archivo.');
 		return null;
@@ -56,7 +56,7 @@ module.exports.registerVote = async (req, res) => {
 		});
 
 		if (parsedStars < 1 || parsedStars > 5) return res.status(400).json({ message: 'El valor de la votación no es válido.' });
-		if (ballot.academicYear !== config.server.academicYear) return res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
+		if (ballot.academicYear !== config.server.currentAcademicYear) return res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
 		if (ballot.degreeId !== req.session.user.degreeId) return res.status(403).json({ message: 'El usuario no pertenece a la titulación de la votación.' });
 
 		const existingRegister = await models.Register.findOne({
@@ -90,7 +90,7 @@ module.exports.registerVote = async (req, res) => {
 			return res.status(503).json({ message: 'Error al enviar el correo de confirmación.' });
 		}
 
-		return res.status(200).json({ message: 'Voto registrado.', voteURL: `${config.server.url}/votes/${vote.id}?key=${salt}` });
+		return res.status(200).json({ message: 'Voto registrado.', voteURL: `${config.server.url}/verified/votes/${vote.id}?key=${salt}` });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ message: 'Error al registrar el voto.' });
@@ -198,7 +198,7 @@ module.exports.deleteVote = async (req, res) => {
 
 		if (!vote.id) return res.status(404).json({ message: 'El voto especificado no existe.' });
 
-		if (vote.ballot.academicYear !== config.server.academicYear) res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
+		if (vote.ballot.academicYear !== config.server.currentAcademicYear) res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
 
 		if (createHash('sha256').update(vote.stars + req.session.user.id + vote.ballot.id + key).digest('hex') !== vote.id) return res.status(403).json({ message: 'No tienes permiso para visualizar este voto.' });
 

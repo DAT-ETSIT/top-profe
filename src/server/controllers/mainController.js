@@ -13,6 +13,16 @@ module.exports.getVotes = async (req, res) => {
 	}
 };
 
+module.exports.getCurrentAcademicYear = async (req, res) => {
+	try {
+		const currentAcademicYear = config.server.currentAcademicYear;
+		return res.status(200).json({ currentAcademicYear });
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ message: 'Error al obtener el año académico actual.' });
+	}
+};
+
 module.exports.getDegrees = async (req, res) => {
 	try {
 		const degrees = await models.Degree.findAll({
@@ -22,7 +32,7 @@ module.exports.getDegrees = async (req, res) => {
 				required: true,
 				attributes: ['id'],
 				where: {
-					academicYear: config.server.academicYear,
+					academicYear: config.server.currentAcademicYear,
 				},
 			}],
 		});
