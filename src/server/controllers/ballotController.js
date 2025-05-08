@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { models, Sequelize } = require('../models');
 const { sendVoteMail } = require('../mail/mail');
+const { retrieveCurrentAcademicYearFromDB, retrieveDisableVotesfromDB } = require('./configController');
 
 const config = require('../config.json');
 
@@ -38,10 +39,12 @@ function prepareMailTemplate(professorName, subjectName, subjectId, stars, voteI
 module.exports.registerVote = async (req, res) => {
 	const { ballotId } = req.params;
 	const { stars } = req.body;
+	const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
+	const disableVotes = await retrieveDisableVotesfromDB();
 
 	const parsedStars = parseInt(stars, 10);
 
-	if (config.server.disableVotes && !req.session.user.admin) return res.status(403).json({ message: 'Ya no es posible emitir votos.' });
+	if (disableVotes && !req.session.user.admin) return res.status(403).json({ message: 'Ya no es posible emitir votos.' });
 
 	try {
 		const ballot = await models.Ballot.findByPk(ballotId, {
@@ -56,7 +59,7 @@ module.exports.registerVote = async (req, res) => {
 		});
 
 		if (parsedStars < 1 || parsedStars > 5) return res.status(400).json({ message: 'El valor de la votación no es válido.' });
-		if (ballot.academicYear !== config.server.currentAcademicYear) return res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
+		if (ballot.academicYear !== currentAcademicYear) return res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
 		if (ballot.degreeId !== req.session.user.degreeId) return res.status(403).json({ message: 'El usuario no pertenece a la titulación de la votación.' });
 
 		const existingRegister = await models.Register.findOne({
@@ -93,7 +96,8 @@ module.exports.registerVote = async (req, res) => {
 		return res.status(200).json({ message: 'Voto registrado.', voteURL: `${config.server.url}/verified/votes/${vote.id}?key=${salt}` });
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({ message: 'Error al registrar el voto.' });
+		const statusCode = error.statusCode || 500;
+		return res.status(statusCode).json({ message: error.message || 'Error al registrar el voto.' });
 	}
 };
 
@@ -174,10 +178,10 @@ module.exports.getVoteConfirmation = async (req, res) => {
 	}
 };
 
-
 module.exports.deleteVote = async (req, res) => {
 	const { voteId } = req.params;
 	const { key } = req.query;
+	const currentAcademicYear = await CurrentAcademicYearFromDB();
 
 	try {
 		const vote = await models.Vote.findByPk(voteId, {
@@ -198,7 +202,7 @@ module.exports.deleteVote = async (req, res) => {
 
 		if (!vote.id) return res.status(404).json({ message: 'El voto especificado no existe.' });
 
-		if (vote.ballot.academicYear !== config.server.currentAcademicYear) res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
+		if (vote.ballot.academicYear !== currentAcademicYear) res.status(409).json({ message: 'La votación seleccionada no pertenece al periodo académico activo.' });
 
 		if (createHash('sha256').update(vote.stars + req.session.user.id + vote.ballot.id + key).digest('hex') !== vote.id) return res.status(403).json({ message: 'No tienes permiso para visualizar este voto.' });
 

@@ -1,16 +1,28 @@
 const { models	 } = require('../models');
 
-const config = require('../config.json');
+const { retrieveCurrentAcademicYearFromDB } = require('./configController');
+
+module.exports.getCurrentAcademicYear = async (req, res) => {
+	try {
+		const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
+		return res.status(200).json({ currentAcademicYear });
+	} catch (error) {
+		console.log(error);
+		const statusCode = error.statusCode || 500;
+		return res.status(statusCode).json({ message: error.message || 'Error al obtener el año académico actual.' });
+	}
+};
 
 module.exports.getVotes = async (req, res) => {
 	try {
+		const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
 		const votes = await models.Vote.count({
             include: [{
                 model: models.Ballot,
                 as: 'ballot',
                 required: true,
                 where: {
-                    academicYear: config.server.currentAcademicYear,
+                    academicYear: currentAcademicYear,
                 },
             }],
         });
@@ -18,22 +30,14 @@ module.exports.getVotes = async (req, res) => {
 		return res.status(200).json({ votes });
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({ message: 'Error al obtener el recuento de votos.' });
-	}
-};
-
-module.exports.getCurrentAcademicYear = async (req, res) => {
-	try {
-		const currentAcademicYear = config.server.currentAcademicYear;
-		return res.status(200).json({ currentAcademicYear });
-	} catch (error) {
-		console.log(error);
-		return res.status(500).json({ message: 'Error al obtener el año académico actual.' });
+		const statusCode = error.statusCode || 500;
+		return res.status(statusCode).json({ message: error.message || 'Error al obtener el total de votos de este año.' });
 	}
 };
 
 module.exports.getDegrees = async (req, res) => {
 	try {
+		const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
 		const degrees = await models.Degree.findAll({
 			include: [{
 				model: models.Ballot,
@@ -41,14 +45,15 @@ module.exports.getDegrees = async (req, res) => {
 				required: true,
 				attributes: ['id'],
 				where: {
-					academicYear: config.server.currentAcademicYear,
+					academicYear: currentAcademicYear,
 				},
 			}],
 		});
 		res.status(200).send(degrees);
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({ message: 'Error al obtener las titulaciones.' });
+		const statusCode = error.statusCode || 500;
+		return res.status(statusCode).json({ message: error.message || 'Error al obtener las titulaciones.' });
 	}
 };
 

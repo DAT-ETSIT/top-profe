@@ -7,6 +7,7 @@ module.exports.getMostVoted = async (req, res) => {
 	// along with their average scoring.
 
 	try {
+		const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
 		const mostVotedProfessors = await models.Professor.findAll({
 			attributes: [
 				'id',
@@ -22,7 +23,7 @@ module.exports.getMostVoted = async (req, res) => {
 				attributes: [],
 				required: true,
 				where: {
-					academicYear: config.server.currentAcademicYear,
+					academicYear: currentAcademicYear,
 				},
 				include: [
 					{
@@ -44,6 +45,7 @@ module.exports.getMostVoted = async (req, res) => {
 		return res.status(200).json({ mostVotedProfessors: mostVotedProfessors.slice(0, 10) });
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({ message: 'Error al obtener el ranking.' });
+		const statusCode = error.statusCode || 500;
+		return res.status(statusCode).json({ message: error.message ||'Error al obtener el ranking.' });
 	}
 };
