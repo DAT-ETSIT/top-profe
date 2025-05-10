@@ -23,11 +23,13 @@ import AdminEditProfessorsView from './views/admin/AdminEditProfessorsView';
 import AdminEditUsersView from './views/admin/AdminEditUsersView';
 import AdminNavbar from './views/admin/subcomponents/AdminNavbar';
 import VoteView from './views/VoteView';
+import AdminEditConfigView from './views/admin/AdminEditConfigView';
+
 
 export default function App() {
 	return (
 		<BrowserRouter>
-			<Toaster toastOptions={{ className: 'toast', duration: 3000 }} />
+			<Toaster toastOptions={{ className: 'toast', duration: 2000 }} />
 			<Routes>
 				<Route path="/" element={<InitialMenu />} />
 				<Route path="subjects/*" element={<SubjectRoutes />} />
@@ -69,6 +71,7 @@ function AdminRoutes() {
 			<br />
 			<Routes>
 				<Route index element={<AdminMainView />} />
+				<Route path="config" element={<AdminEditConfigView />} />
 				<Route path="degrees" element={<AdminDegreesView />} />
 				<Route path="update">
 					<Route path="subjects" element={<AdminDegreesView updateSubjects />} />
