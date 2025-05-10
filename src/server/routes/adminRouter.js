@@ -26,4 +26,6 @@ adminRouter.put('/professors', adminController.updateProfessor);
 adminRouter.get('/users', adminController.getUsers);
 adminRouter.put('/users', adminController.updateUser);
 
+adminRouter.put('/update/config', adminController.updateConfig);
+
 module.exports = adminRouter;

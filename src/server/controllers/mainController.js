@@ -1,6 +1,6 @@
 const { models	 } = require('../models');
 
-const { retrieveCurrentAcademicYearFromDB } = require('./configController');
+const { retrieveCurrentAcademicYearFromDB, retrieveDisableVotesFromDB, retrieveConfigFromDB } = require('./configController');
 
 module.exports.getCurrentAcademicYear = async (req, res) => {
 	try {
@@ -10,6 +10,17 @@ module.exports.getCurrentAcademicYear = async (req, res) => {
 		console.log(error);
 		const statusCode = error.statusCode || 500;
 		return res.status(statusCode).json({ message: error.message || 'Error al obtener el año académico actual.' });
+	}
+};
+
+module.exports.getConfig = async (req, res) => {
+	try {
+		const {currentAcademicYear, disableVotes} = await retrieveConfigFromDB();
+		return res.status(200).json({ currentAcademicYear, disableVotes });
+	} catch (error) {
+		console.log(error);
+		const statusCode = error.statusCode || 500;
+		return res.status(statusCode).json({ message: error.message || 'Error al obtener la configuración.' });
 	}
 };
 
