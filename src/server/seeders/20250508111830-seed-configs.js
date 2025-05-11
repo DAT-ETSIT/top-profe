@@ -5,6 +5,7 @@ module.exports = {
         await queryInterface.bulkInsert('Configs', [{
             currentAcademicYear: '2023-24',
             disableVotes: false,
+            automaticEmails: false,
             createdAt: new Date(),
             updatedAt: new Date(),
         }], {});

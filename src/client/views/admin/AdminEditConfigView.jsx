@@ -21,6 +21,7 @@ class AdminEditConfigClass extends Component {
             configValues: {
                 currentAcademicYear: '',
                 disableVotes: false,
+                automaticEmails: false,
             },
             showConfirmation: false,
         };
@@ -30,19 +31,20 @@ class AdminEditConfigClass extends Component {
         this.loadConfig();
         }
 
-    loadConfig() {
-            fetchGet('/api/config')
-                .then(r => (r?.status === 200) && r.json())
-                .then((res) => {
-                    this.setState({
-                        configValues: {
-                            currentAcademicYear: res.currentAcademicYear,
-                            disableVotes: res.disableVotes
-                        },
-                        isLoaded: true,
-                    });
+    loadConfig () {
+        fetchGet('/api/config')
+            .then(r => (r?.status === 200) && r.json())
+            .then((res) => {
+                this.setState({
+                    configValues: {
+                        currentAcademicYear: res.currentAcademicYear,
+                        disableVotes: res.disableVotes,
+                        automaticEmails: res.automaticEmails,
+                    },
+                    isLoaded: true,
                 });
-        };
+            });
+    };
 
     resetUsers() {
         this.setState({
@@ -50,7 +52,6 @@ class AdminEditConfigClass extends Component {
         });
 
         const loadingToast = toast.loading('Reseteando usuarios...');
-        console.log('Resetting users');
         fetchDelete(`/api/admin/users/reset`, {})
             .then(r => (r?.status === 200) && r.json())
             .then((res) => {

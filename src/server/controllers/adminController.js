@@ -321,18 +321,19 @@ module.exports.resetUsers = async (req, res, next) => {
 module.exports.updateConfig = async (req, res, next) => {
 	const { config } = req.body;
 	try {
-		console.log(config);
 		const currentConfig = await models.Config.findByPk(1);
 
 		if (!currentConfig) return res.status(404).json({ message: 'Configuración no encontrada.' });
 
+
 		currentConfig.currentAcademicYear = config.currentAcademicYear;
 		currentConfig.disableVotes = config.disableVotes;
+		currentConfig.automaticEmails = config.automaticEmails;
 
 		await currentConfig.save();
 
-		return res.status(200);
+		return res.status(200).json({ message: 'Configuración actualizada.' });
 	} catch (error) {
-		return res.status(500);
+		return res.status(500).json({ message: 'Error al actualizar la configuración.' });
 	}
 }

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { models, Sequelize } = require('../models');
 const { sendVoteMail } = require('../mail/mail');
-const { retrieveCurrentAcademicYearFromDB, retrieveDisableVotesFromDB } = require('./configController');
+const { retrieveCurrentAcademicYearFromDB, retrieveDisableVotesFromDB , retrieveAutomaticEmailsFromDB} = require('./configController');
 
 const config = require('../config.json');
 
@@ -41,6 +41,7 @@ module.exports.registerVote = async (req, res) => {
 	const { stars } = req.body;
 	const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
 	const disableVotes = await retrieveDisableVotesFromDB();
+	const automaticEmails = await retrieveAutomaticEmailsFromDB();
 
 	const parsedStars = parseInt(stars, 10);
 
@@ -84,16 +85,16 @@ module.exports.registerVote = async (req, res) => {
 			userId: req.session.user.id,
 		});
 
-		// Automatic confirmation email, without the need to solicit it.
+		if (automaticEmails) {
+			const mailContents = await prepareMailTemplate(ballot.professor.name, ballot.subject.name, ballot.subject.id, stars, vote.id, salt);
+			if (!mailContents) throw new Error('Error al modificar la plantilla del correo de confirmación.');
 
-		// const mailContents = await prepareMailTemplate(ballot.professor.name, ballot.subject.name, ballot.subject.id, stars, vote.id, salt);
-		// if (!mailContents) throw new Error('Error al modificar la plantilla del correo de confirmación.');
-
-		// if (!await sendVoteMail(req.session.user.email, mailContents)) {
-		// 	vote.destroy();
-		// 	register.destroy();
-		// 	return res.status(503).json({ message: 'Error al enviar el correo de confirmación.' });
-		// }
+			if (!await sendVoteMail(req.session.user.email, mailContents)) {
+				vote.destroy();
+				register.destroy();
+				return res.status(503).json({ message: 'Error al enviar el correo de confirmación.' });
+			}
+		}
 
 		return res.status(200).json({ message: 'Voto registrado.', voteURL: `${config.server.url}/verified/votes/${vote.id}?key=${salt}` });
 	} catch (error) {

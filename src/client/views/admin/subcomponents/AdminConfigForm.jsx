@@ -12,6 +12,7 @@ export default class AdminConfigForm extends Component {
             configValues: {
                 currentAcademicYear: configValues.currentAcademicYear || '',
                 disableVotes: configValues.disableVotes || false,
+                automaticEmails: configValues.automaticEmails || false,
             },
         };      
     }
@@ -38,20 +39,30 @@ export default class AdminConfigForm extends Component {
         });
     }
 
+    setAutomaticEmails(value) {
+        this.setState(function(prevState) {
+            return {
+                configValues: {
+                    ...prevState.configValues,
+                    automaticEmails: value,
+                },
+            };
+        });
+    }
+
     handleSubmit (e) {
         e.preventDefault();
         const configValues = this.state.configValues;
+        const {loadConfig} = this.props;
         const loadingToast = toast.loading('Guardando configuración...');
-        console.log('Config values:', configValues);
         fetchPut('/api/admin/update/config', { config: configValues })
         .then(r => (r?.status === 200) && r.json())
 		.then((res) =>  res ? toast.success('Configuración actualizada.', { id: loadingToast }) : toast.dismiss(loadingToast))
-		.finally(() => this.loadConfig());
     }
 
     render() {
 
-        const { currentAcademicYear, disableVotes } = this.state.configValues;
+        const { currentAcademicYear, disableVotes, automaticEmails } = this.state.configValues;
 
         return (
             <div>
@@ -68,12 +79,21 @@ export default class AdminConfigForm extends Component {
                     />
                 </div>
                 <div>
-                    <label htmlFor="disableVotes">Disable Votes:</label>
+                    <label htmlFor="disableVotes">Desactivar Votos:</label>
                     <input
                         type="checkbox"
                         id="disableVotes"
                         checked={disableVotes}
                         onChange={(e) => this.setDisableVotes(e.target.checked)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="automaticEmails">Emails Automáticos:</label>
+                    <input
+                        type="checkbox"
+                        id="automaticEmails"
+                        checked={automaticEmails}
+                        onChange={(e) => this.setAutomaticEmails(e.target.checked)}
                     />
                 </div>
                 <button type="submit">Save Changes</button>
