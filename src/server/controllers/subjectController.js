@@ -1,6 +1,7 @@
 const { models, Sequelize } = require('../models');
 
 const config = require('../config.json');
+const { retrieveCurrentAcademicYearFromDB } = require('./configController');
 
 module.exports.getSubjects = async (req, res) => {
 	try {
@@ -26,6 +27,7 @@ module.exports.getSubjectDetails = async (req, res) => {
 	const adminCountQuery = req.session.user.admin ? Sequelize.fn('COUNT', Sequelize.col('vote.stars')) : 0;
 
 	try {
+		const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
 		const subject = await models.Subject.findOne({
 			where: {
 				id: subjectId,
@@ -80,7 +82,7 @@ module.exports.getSubjectDetails = async (req, res) => {
 			},
 			],
 			where: {
-				academicYear: config.server.currentAcademicYear,
+				academicYear: currentAcademicYear,
 				subjectId: subject.id,
 			},
 			group: ['Ballot.professorId', 'Ballot.subjectId'],
@@ -88,6 +90,7 @@ module.exports.getSubjectDetails = async (req, res) => {
 		res.status(200).json({ subject, ballots });
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({ message: 'Error al obtener los datos de la asignatura.' });
+		const statusCode = error.statusCode || 500;
+		return res.status(statusCode).json({ message: error.message || 'Error al obtener los datos de la asignatura.' });
 	}
 };

@@ -1,6 +1,8 @@
 const { models, Sequelize } = require('../models');
 
-const config = require('../config.json');
+
+const { retrieveCurrentAcademicYearFromDB } = require('./configController');
+
 
 module.exports.getProfessors = async (req, res) => {
 	// Returns a list with all the professors registered in the application,
@@ -10,6 +12,7 @@ module.exports.getProfessors = async (req, res) => {
 	const adminCountQuery = req.session.user.admin ? Sequelize.fn('COUNT', Sequelize.col('ballot->vote.stars')) : 0;
 
 	try {
+		const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
 		const professors = await models.Professor.findAll({
 			attributes: [
 				'id',
@@ -37,7 +40,7 @@ module.exports.getProfessors = async (req, res) => {
 				attributes: [],
 				required: true,
 				where: {
-					academicYear: config.server.currentAcademicYear,
+					academicYear: currentAcademicYear,
 				},
 				include: [
 					{
@@ -59,7 +62,8 @@ module.exports.getProfessors = async (req, res) => {
 		res.status(200).json(professors);
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({ message: 'Error al obtener los datos de los profesores.' });
+		const statusCode = error.statusCode || 500;
+		res.status(statusCode).json({ message: error.message || 'Error al obtener los datos de los profesores.' });
 	}
 };
 
@@ -70,6 +74,7 @@ module.exports.getProfessorProfile = async (req, res) => {
 	const { professorHash } = req.params;
 
 	try {
+		const currentAcademicYear = await retrieveCurrentAcademicYearFromDB();
 		const professor = await models.Professor.findOne({ where: { hash: professorHash } });
 
 		const ballots = await models.Ballot.findAll({
@@ -117,7 +122,7 @@ module.exports.getProfessorProfile = async (req, res) => {
 			},
 			],
 			where: {
-				academicYear: config.server.currentAcademicYear,
+				academicYear: currentAcademicYear,
 				professorId: professor.id,
 			},
 			group: ['Ballot.professorId', 'Ballot.subjectId'],
@@ -125,6 +130,7 @@ module.exports.getProfessorProfile = async (req, res) => {
 		res.status(200).json({ professor, ballots });
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({ message: 'Error al obtener los datos del profesor.' });
+		const statusCode = error.statusCode || 500;
+		res.status(statusCode).json({ message: error.message || 'Error al obtener los datos del profesor.' });
 	}
 };

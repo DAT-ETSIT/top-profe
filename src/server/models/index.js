@@ -17,6 +17,7 @@ const Subject = require('./Subject')(sequelize, Sequelize.DataTypes);
 const Vote = require('./Vote')(sequelize, Sequelize.DataTypes);
 const Note = require('./Note')(sequelize, Sequelize.DataTypes);
 const Session = require('./Session')(sequelize, Sequelize.DataTypes);
+const Config = require('./Config')(sequelize, Sequelize.DataTypes);
 
 Ballot.belongsTo(Professor, {
 	as: 'professor',
