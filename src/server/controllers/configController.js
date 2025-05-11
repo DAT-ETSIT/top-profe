@@ -3,7 +3,7 @@ const { models } = require('../models');
 const retrieveConfigFromDB = async () => {
 	try {
 		const config = await models.Config.findOne({
-			attributes: ['currentAcademicYear', 'disableVotes'],
+			attributes: ['currentAcademicYear', 'disableVotes', 'automaticEmails'],
 		});
 		if (!config) {
 			const error = new Error('La configuración no existe.');

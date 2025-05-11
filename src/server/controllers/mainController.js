@@ -15,8 +15,8 @@ module.exports.getCurrentAcademicYear = async (req, res) => {
 
 module.exports.getConfig = async (req, res) => {
 	try {
-		const {currentAcademicYear, disableVotes} = await retrieveConfigFromDB();
-		return res.status(200).json({ currentAcademicYear, disableVotes });
+		const {currentAcademicYear, disableVotes, automaticEmails} = await retrieveConfigFromDB();
+		return res.status(200).json({ currentAcademicYear, disableVotes , automaticEmails });
 	} catch (error) {
 		console.log(error);
 		const statusCode = error.statusCode || 500;

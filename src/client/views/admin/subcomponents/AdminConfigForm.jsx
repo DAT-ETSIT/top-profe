@@ -53,11 +53,11 @@ export default class AdminConfigForm extends Component {
     handleSubmit (e) {
         e.preventDefault();
         const configValues = this.state.configValues;
+        const {loadConfig} = this.props;
         const loadingToast = toast.loading('Guardando configuración...');
         fetchPut('/api/admin/update/config', { config: configValues })
         .then(r => (r?.status === 200) && r.json())
 		.then((res) =>  res ? toast.success('Configuración actualizada.', { id: loadingToast }) : toast.dismiss(loadingToast))
-		.finally(() => this.loadConfig());
     }
 
     render() {
