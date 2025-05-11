@@ -7,32 +7,15 @@ import toast from 'react-hot-toast';
 export default class AdminConfigForm extends Component {
     constructor(props) {
         super(props);
-
+        const { configValues } = this.props;
         this.state = {
-            isLoaded: false,
-            object: {},
             configValues: {
-                currentAcademicYear: '',
-                disableVotes: false,
+                currentAcademicYear: configValues.currentAcademicYear || '',
+                disableVotes: configValues.disableVotes || false,
             },
-        };
+        };      
     }
-
-    componentDidMount() {
-            this.loadConfig();
-        }
-
-    loadConfig() {
-            fetchGet('/api/config')
-                .then(r => (r?.status === 200) && r.json())
-                .then((res) => {
-                    this.setState({
-                        configValues: res,
-                        isLoaded: true,
-                    });
-                });
-        };
-
+            
     setCurrentAcademicYear(value) {
         this.setState(function(prevState) {
             return {
@@ -63,15 +46,12 @@ export default class AdminConfigForm extends Component {
         fetchPut('/api/admin/update/config', { config: configValues })
         .then(r => (r?.status === 200) && r.json())
 		.then((res) =>  res ? toast.success('Configuración actualizada.', { id: loadingToast }) : toast.dismiss(loadingToast))
-		.finally(() => this.loadUsers());
+		.finally(() => this.loadConfig());
     }
 
     render() {
-        const { isLoaded } = this.state;
+
         const { currentAcademicYear, disableVotes } = this.state.configValues;
-
-
-        if (!isLoaded) return (<div className="full-width">Cargando...</div>);
 
         return (
             <div>

@@ -297,6 +297,27 @@ module.exports.updateUser = async (req, res, next) => {
 	}
 };
 
+module.exports.resetUsers = async (req, res, next) => {
+	try {
+		const currentUsers = await models.User.findAll();
+
+		await Promise.all(currentUsers.map(async (user) => {
+				user.degreeId = null;
+				await user.save();
+		}));
+		await Promise.all(currentUsers.map(async (user) => {
+			if (!user.admin) {
+				user.active = false;
+				await user.save();
+			}
+		}));
+		return res.status(200).json({ message: 'Usuarios reseteados.' });
+
+	} catch (error) {
+		return res.status(500).json({ message: 'Error al resetear los usuarios.' });
+	}
+};
+
 module.exports.updateConfig = async (req, res, next) => {
 	const { config } = req.body;
 	try {

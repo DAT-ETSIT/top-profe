@@ -1,4 +1,5 @@
 const { models, Sequelize } = require('../models');
+const { retrieveCurrentAcademicYearFromDB } = require('./configController');
 
 const config = require('../config.json');
 

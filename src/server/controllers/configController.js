@@ -19,7 +19,7 @@ const retrieveConfigFromDB = async () => {
 const retrieveCurrentAcademicYearFromDB = async () => {
     try {
         const config = await retrieveConfigFromDB();
-        if (!config.currentAcademicYear) {
+        if (config.currentAcademicYear === undefined || config.currentAcademicYear === null) {
             const error = new Error('El año académico actual no existe.');
             error.statusCode = 404;
             throw error;
@@ -33,7 +33,7 @@ const retrieveCurrentAcademicYearFromDB = async () => {
 const retrieveDisableVotesFromDB = async () => {
 	try {
         const config = await retrieveConfigFromDB();
-        if (!config.disableVotes) {
+        if (config.disableVotes === undefined || config.disableVotes === null) {
             const error = new Error('No se ha podido recuperar la configuración de votos.');
             error.statusCode = 404;
             throw error;

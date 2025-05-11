@@ -25,6 +25,7 @@ adminRouter.put('/professors', adminController.updateProfessor);
 
 adminRouter.get('/users', adminController.getUsers);
 adminRouter.put('/users', adminController.updateUser);
+adminRouter.delete('/users/reset', adminController.resetUsers);
 
 adminRouter.put('/update/config', adminController.updateConfig);
 
