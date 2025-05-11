@@ -61,7 +61,6 @@ export default class InitialMenu extends Component {
 					degrees: res,
 				});
 				const { degrees } = this.state;
-				if (degrees) this.setState({ degreeId: degrees[0].id });
 			});
 
 		fetchGet('/api/votes')
@@ -85,6 +84,11 @@ export default class InitialMenu extends Component {
 
 	setStudentDegree() {
 		const { degreeId } = this.state;
+
+		if (!degreeId) {
+			alert('Por favor, selecciona una titulación antes de continuar.');
+			return;
+		}
 
 		this.setState({
 			showStudentModal: false,
@@ -119,8 +123,13 @@ export default class InitialMenu extends Component {
 					<p>Antes de continuar, indícanos la titulación que estás cursando durante este curso académico:</p>
 					<div className="big-input search-input box">
 						<select onChange={() => this.setState({ degreeId: event.target.value })} value={degreeId}>
-							{degrees.map(degree => (
-								<option key={degree.id} value={degree.id}>{degree.acronym} ({degree.id})</option>
+							<option value="" disabled >
+								Selecciona una titulación
+							</option>
+							{degrees.map((degree) => (
+								<option key={degree.id} value={degree.id}>
+									{degree.acronym} ({degree.id})
+								</option>
 							))}
 						</select>
 					</div>
