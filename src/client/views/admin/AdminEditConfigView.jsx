@@ -21,6 +21,7 @@ class AdminEditConfigClass extends Component {
             configValues: {
                 currentAcademicYear: '',
                 disableVotes: false,
+                automaticEmails: false,
             },
             showConfirmation: false,
         };
@@ -37,7 +38,8 @@ class AdminEditConfigClass extends Component {
                     this.setState({
                         configValues: {
                             currentAcademicYear: res.currentAcademicYear,
-                            disableVotes: res.disableVotes
+                            disableVotes: res.disableVotes,
+                            automaticEmails: res.automaticEmails,
                         },
                         isLoaded: true,
                     });
