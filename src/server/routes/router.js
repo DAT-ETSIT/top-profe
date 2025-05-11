@@ -20,6 +20,7 @@ const router = express.Router();
 
 router.get('/votes', mainController.getVotes);
 router.get('/currentAcademicYear', mainController.getCurrentAcademicYear)
+router.get('/config', mainController.getConfig);
 
 // ONLY LOGGED USERS, NOT EXCLUDED
 router.use(middlewares.checkLogin);
