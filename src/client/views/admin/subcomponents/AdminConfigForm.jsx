@@ -9,55 +9,26 @@ export default class AdminConfigForm extends Component {
         super(props);
         const { configValues } = this.props;
         this.state = {
-            configValues: {
-                currentAcademicYear: configValues.currentAcademicYear || '',
-                disableVotes: configValues.disableVotes || false,
-                automaticEmails: configValues.automaticEmails || false,
-            },
-        };      
+            configValues: { ...props.configValues }, 
+        };    
     }
             
-    setCurrentAcademicYear(value) {
-        this.setState(function(prevState) {
-            return {
-                configValues: {
-                    ...prevState.configValues,
-                    currentAcademicYear: value,
-                },
-            };
-        });
-    }
-
-    setDisableVotes(value) {
-        this.setState(function(prevState) {
-            return {
-                configValues: {
-                    ...prevState.configValues,
-                    disableVotes: value,
-                },
-            };
-        });
-    }
-
-    setAutomaticEmails(value) {
-        this.setState(function(prevState) {
-            return {
-                configValues: {
-                    ...prevState.configValues,
-                    automaticEmails: value,
-                },
-            };
-        });
+    componentDidUpdate(prevProps) {
+        if (prevProps.configValues !== this.props.configValues) {
+            this.setState({ configValues: { ...this.props.configValues } });
+        }
     }
 
     handleSubmit (e) {
         e.preventDefault();
-        const configValues = this.state.configValues;
-        const {loadConfig} = this.props;
+        const { configValues } = this.state;
+        const { reloadPage } = this.props;
         const loadingToast = toast.loading('Guardando configuración...');
         fetchPut('/api/admin/update/config', { config: configValues })
         .then(r => (r?.status === 200) && r.json())
 		.then((res) =>  res ? toast.success('Configuración actualizada.', { id: loadingToast }) : toast.dismiss(loadingToast))
+        .then(() => {
+                reloadPage();})
     }
 
     render() {
@@ -74,7 +45,12 @@ export default class AdminConfigForm extends Component {
                         type="text"
                         id="currentAcademicYear"
                         value={currentAcademicYear}
-                        onChange={(e) => this.setCurrentAcademicYear(e.target.value)}
+                        onChange={(e) => {
+                            const currentAcademicYearValue = e.target.value; 
+                            this.setState((prevState) => ({
+                                configValues: { ...prevState.configValues, currentAcademicYear: currentAcademicYearValue },
+                            }));
+                        }}
                         required
                     />
                 </div>
@@ -84,7 +60,12 @@ export default class AdminConfigForm extends Component {
                         type="checkbox"
                         id="disableVotes"
                         checked={disableVotes}
-                        onChange={(e) => this.setDisableVotes(e.target.checked)}
+                        onChange={(e) =>{
+                            const disableVotesChecked = e.target.checked;
+                            this.setState((prevState) => ({
+                                configValues: { ...prevState.configValues, disableVotes: disableVotesChecked },
+                            }))
+                        }}
                     />
                 </div>
                 <div>
@@ -93,7 +74,12 @@ export default class AdminConfigForm extends Component {
                         type="checkbox"
                         id="automaticEmails"
                         checked={automaticEmails}
-                        onChange={(e) => this.setAutomaticEmails(e.target.checked)}
+                        onChange={(e) => {
+                            const automaticEmailsChecked = e.target.checked;
+                            this.setState((prevState) => ({
+                                configValues: { ...prevState.configValues, automaticEmails: automaticEmailsChecked },
+                            }))
+                        }}
                     />
                 </div>
                 <button type="submit">Save Changes</button>
