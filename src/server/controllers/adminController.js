@@ -318,6 +318,36 @@ module.exports.resetUsers = async (req, res, next) => {
 	}
 };
 
+module.exports.deleteVotes = async (req, res, next) => {
+	try {
+		const { deletePassword, academicYear } = req.body;
+		if (deletePassword !== config.server.deletePassword) return res.status(403).json({ message: 'Contraseña incorrecta.' });
+
+		if (!academicYear) return res.status(400).json({ message: 'Año académico no especificado.' });
+		
+		console.log('Deleting votes...');
+		const votes = await models.Vote.findAll({
+			include: [{
+				model: models.Ballot,
+				as: 'ballot',
+				where: {
+					academicYear,
+				},
+			}],
+		});
+		console.log('Votes found:', votes.length);
+		await Promise.all(votes.map(async (vote) => {
+			await vote.destroy();
+		}
+		));
+		console.log('Votes deleted.');
+
+		return res.status(200).json({ message: 'Votos borrados.' });
+	} catch (error) {
+		return res.status(500).json({ message: 'Error al borrar los votos.' });
+	}
+};
+
 module.exports.updateConfig = async (req, res, next) => {
 	const { config } = req.body;
 	try {

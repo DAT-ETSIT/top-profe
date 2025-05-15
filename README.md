@@ -53,8 +53,7 @@ $ yarn install
         "usingProxy": false,
         "sessionSecret": "<some secure random secret>",
         "schoolCode": "<id of the school in XX format>",
-        "currentAcademicYear": "<the current academic year in 20XX-YY format>",
-        "disableVotes": "<boolean flag to disable voting capabilities>"
+        "deletePassword": "<super secret password to reset votes>"
     },
     "email": {
         "host": "<your smtp server host>",

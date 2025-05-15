@@ -54,7 +54,8 @@ Professor.hasMany(Ballot, {
 });
 Professor.hasMany(Vote, {
 	as: 'vote',
-	foreignKey: 'id',
+	foreignKey: 'ballotId',
+
 });
 Professor.hasMany(Note, {
 	as: 'note',
@@ -84,15 +85,7 @@ Subject.belongsTo(Degree, {
 
 Vote.belongsTo(Ballot, {
 	as: 'ballot',
-	sourceKey: 'ballotId',
-	targetKey: 'id',
-});
-
-Vote.belongsTo(Professor, {
-	through: Ballot,
-	sourceKey: 'voteId',
-	targetKey: 'id',
-	as: 'vote',
+	foreignKey: 'ballotId',
 });
 
 Note.belongsTo(Professor, {

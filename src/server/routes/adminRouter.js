@@ -29,4 +29,6 @@ adminRouter.delete('/users/reset', adminController.resetUsers);
 
 adminRouter.put('/update/config', adminController.updateConfig);
 
+adminRouter.delete('/votes/delete', adminController.deleteVotes);
+
 module.exports = adminRouter;
