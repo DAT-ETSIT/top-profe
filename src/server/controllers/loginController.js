@@ -62,8 +62,11 @@ const registerUser = async (userInfo) => {
 
 const updateUser = async (registeredUser, userInfo) => {
 	try {
+		console.log('Updating user:', registeredUser.id);
+		console.log('User info:', userInfo);
 		const user = retrieveUserFromSession(userInfo, registeredUser.excluded);
 
+		console.log('User to be saved:', user);
 		await registeredUser.save(user);
 		return user;
 	} catch (error) {
