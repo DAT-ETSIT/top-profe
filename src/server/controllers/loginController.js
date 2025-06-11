@@ -11,13 +11,28 @@ const retrieveUserFromSession = (userInfo, excluded = false) => {
 	let userType = 'other';
 
 	if (Array.isArray(userInfo.upmClassifCode)) {
+		console.log('ClassifCodesArray found');
+		console.log(userInfo.upmClassifCode);
+
 		userInfo.upmClassifCode.forEach((code) => {
+
+			console.log(`Checking code: ${code}`);
+
 			if (code.startsWith(`CentroLectivo:${schoolCode}:`)) {
+				console.log('CentroLectivo found');
+				console.log(`Code ends with: ${code.charAt(code.length - 1)}`);
+				console.log(`Student codes: ${studentCodes}`);
+				console.log(`Professor codes: ${professorCodes}`);
 				if (studentCodes.includes(code.charAt(code.length - 1))) userType = 'student';
 				if (professorCodes.includes(code.charAt(code.length - 1))) userType = 'professor';
+				console.log(`User type set to: ${userType}`);
 			}
 			if (code.startsWith(`CentroPerfil:${schoolCode}:`)) {
+				console.log('CentroPerfil found');
+				console.log(`Code ends with: ${code.charAt(code.length - 1)}`);
+				console.log(`Professor codes: ${professorCodes}`);
 				if (professorCodes.includes(code.charAt(code.length - 1))) userType = 'professor';
+				console.log(`User type set to: ${userType}`);
 			}
 		});
 	}
